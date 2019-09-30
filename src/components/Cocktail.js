@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from "react-router-dom";
 
 const divStyle = {
     flex: '0 0 25%',
@@ -13,9 +14,15 @@ const imgStyle = {
 const Cocktail = (props) => {
 
     return <div style={divStyle}>
-        <img src={props.img} alt={props.name} style={imgStyle}/>
-        <h3>{props.name}</h3>
+        <Link to={{
+            pathname: '/cocktail',
+            state: props
+        }}>
+            <img src={props.img} alt={props.name} style={imgStyle} />
+            <h3>{props.name}</h3>
+        </Link>
     </div>
+
 }
 
 export default Cocktail;
