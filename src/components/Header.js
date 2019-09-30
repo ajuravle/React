@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from "react-router-dom";
 
 const style = {
     textAlign: 'center'
@@ -6,7 +7,7 @@ const style = {
 
 const Header = () => {
     return <h2 style={style}>
-        Cocktails
+        <Link to='/'>Cocktails</Link>
     </h2>
 }
 

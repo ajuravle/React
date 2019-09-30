@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Cocktail from './Cocktail';
+import Search from './Search';
 import axios from 'axios'
 
 const style = {
@@ -8,32 +9,48 @@ const style = {
     margin: '30px'
 }
 
-const API_URL = 'https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=Alcoholic';
+const ALL_COCKTAILS_URL = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?f=a';
+const API_URL = 'https://www.thecocktaildb.com/api/json/v1/1/filter.php?';
 
 class CocktailList extends Component {
 
     constructor(props) {
         super(props);
-
-        this.state = { list: [] };
+        this.state = { list: [], currentText: null };
     }
 
     componentDidMount() {
-        axios.get(API_URL)
+        this.getCocktails();
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.match.params.category !== prevProps.match.params.category) {
+            this.getCocktails();
+        }
+    }
+
+    setSearchText = (text) => this.setState({ currentText: text });
+
+    render() {
+        return <>
+            <Search searchText={this.setSearchText} />
+            <div style={style}>
+                {this.state.list
+                    .filter(co => !this.state.currentText || co.strDrink.indexOf(this.state.currentText) !== -1)
+                    .map((co) => <Cocktail key={co.idDrink}
+                        name={co.strDrink}
+                        img={co.strDrinkThumb} />
+                    )}
+            </div>
+        </>
+    }
+
+    getCocktails() {
+        const url = this.props.match.params.category ? `${API_URL}${this.props.match.params.category}` : ALL_COCKTAILS_URL;
+        axios.get(url)
             .then(res => {
                 this.setState({ list: res.data.drinks });
             })
-    }
-
-    render() {
-        return <div style={style}>
-            {this.state.list
-                .filter(co => !this.props.searchText || co.strDrink.indexOf(this.props.searchText) != -1)
-                .map((co) => <Cocktail key={co.idDrink}
-                    name={co.strDrink}
-                    img={co.strDrinkThumb} />
-                )}
-        </div>
     }
 }
 
